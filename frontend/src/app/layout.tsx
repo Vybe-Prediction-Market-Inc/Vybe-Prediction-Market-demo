@@ -3,6 +3,7 @@
 import './globals.css';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -24,6 +25,25 @@ const wagmiConfig = getDefaultConfig({
 const queryClient = new QueryClient();
 
 function NavBar() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = (
+    <>
+      <Link href="/" className="text-[var(--muted)] hover:text-[var(--fg)] transition" onClick={() => setMobileMenuOpen(false)}>
+        Home
+      </Link>
+      <Link href="/explore" className="text-[var(--muted)] hover:text-[var(--fg)] transition" onClick={() => setMobileMenuOpen(false)}>
+        Explore
+      </Link>
+      <Link href="/dashboard" className="text-[var(--muted)] hover:text-[var(--fg)] transition" onClick={() => setMobileMenuOpen(false)}>
+        Dashboard
+      </Link>
+      {/* <Link href="/profile" className="text-[var(--muted)] hover:text-[var(--fg)] transition">
+        Profile
+      </Link> */}
+    </>
+  );
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-[var(--bg)]/70 backdrop-blur-md border-b border-white/10">
       <nav className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
@@ -44,25 +64,48 @@ function NavBar() {
 
         {/* Middle: Links */}
         <div className="hidden sm:flex items-center gap-6">
-          <Link href="/" className="text-[var(--muted)] hover:text-[var(--fg)] transition">
-            Home
-          </Link>
-          <Link href="/explore" className="text-[var(--muted)] hover:text-[var(--fg)] transition">
-            Explore
-          </Link>
-          <Link href="/dashboard" className="text-[var(--muted)] hover:text-[var(--fg)] transition">
-            Dashboard
-          </Link>
-          <Link href="/profile" className="text-[var(--muted)] hover:text-[var(--fg)] transition">
-            Profile
-          </Link>
+          {navLinks}
         </div>
 
         {/* Right: Wallet */}
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="sm:hidden inline-flex items-center justify-center rounded-md border border-white/10 bg-white/10 px-2.5 py-1.5 text-sm text-[var(--fg)] hover:bg-white/20 transition"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav"
+            aria-label="Toggle navigation"
+            onClick={() => setMobileMenuOpen(open => !open)}
+          >
+            <span className="sr-only">Toggle navigation</span>
+            <svg
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d={mobileMenuOpen ? 'M6 6l8 8M6 14L14 6' : 'M3 6h14M3 10h14M3 14h14'}
+              />
+            </svg>
+          </button>
           <CustomWalletButton />
         </div>
       </nav>
+      {mobileMenuOpen && (
+        <div
+          id="mobile-nav"
+          className="sm:hidden border-t border-white/10 bg-[var(--bg)]/95"
+        >
+          <div className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-4">
+            {navLinks}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

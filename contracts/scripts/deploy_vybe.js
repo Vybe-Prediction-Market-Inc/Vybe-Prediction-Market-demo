@@ -112,23 +112,6 @@ async function main() {
   console.log("VybePredictionMarket:", await vybe.getAddress());
   console.log("Deployer:", deployer.address);
   console.log("Oracle:", oracle.address);
-
-  const latestBlock = await connection.ethers.provider.getBlock("latest");
-  const now = Number(latestBlock.timestamp);
-  const seconds = Number(process.env.DEADLINE_SECS || "300");
-  const deadline = now + seconds;
-  const threshold = Number(process.env.THRESHOLD || "100000");
-
-  const question = `Will "${canonicalName}" by ${primaryArtists} hit playback count >= ${threshold} in ${seconds}s?`;
-
-  const tx = await vybe.connect(deployer).createMarket(question, trackId, threshold, deadline);
-  const rcpt = await tx.wait();
-  const marketId = await vybe.marketCount();
-
-  console.log("Demo market created:", marketId.toString());
-  console.log("Track ID:", trackId);
-  console.log("Question:", question);
-  console.log("Deadline:", deadline);
 }
 
 main().catch((err) => {

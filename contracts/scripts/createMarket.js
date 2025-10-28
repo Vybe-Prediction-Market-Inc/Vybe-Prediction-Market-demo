@@ -8,14 +8,53 @@ import "dotenv/config";
 const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
 const SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
 const HARDCODED_MARKET_BATCH = [
-
     {
-        songName: "Sin sentimientos",
-        artistName: "Grupo Niche",
-        threshold: "150000",
-        deadlineSeconds: 120,
+        songName: "back to friends",
+        artistName: "sombr",
+        threshold: "1400000000",
+        deadlineSeconds: 1209600,
         question:
-            'Will "Sin sentimientos" by Grupo Niche hit 150k plays in 2 min?',
+            'Will "back to friends" by sombr hit 1.4 billion playbacks in 2 weeks?',
+    },
+    {
+        songName: "Todo de Ti",
+        artistName: "Rauw Alejandro",
+        threshold: "1700000000",
+        deadlineSeconds: 172800,
+        question:
+            'Will "Todo de Ti" by Rauw Alejandro hit 1.7 billion playbacks in 2 days?',
+    },
+    {
+        songName: "Creep",
+        artistName: "Radiohead",
+        threshold: "2500000000",
+        deadlineSeconds: 14400,
+        question:
+            'Will "Creep" by Radiohead hit 2.5 billion playbacks in 4 hours?',
+    },
+    {
+        songName: "Die With A Smile",
+        artistName: "Lady Gaga",
+        threshold: "3200000000",
+        deadlineSeconds: 86400,
+        question:
+            'Will "Die With A Smile" by Bruno Mars and Lady Gaga hit 3.2 billion playbacks in 1 day?',
+    },
+    {
+        songName: "Sin Sentimientos",
+        artistName: "Grupo Niche",
+        threshold: "300000000",
+        deadlineSeconds: 259200,
+        question:
+            'Will "Sin Sentimientos" by Grupo Niche hit 300 million playbacks in 3 days?',
+    },
+    {
+        songName: "Da Wizard",
+        artistName: "Travis Scott",
+        threshold: "30000000",
+        deadlineSeconds: 604800,
+        question:
+            'Will "Da Wizard" by Travis Scott hit 30 million playbacks in 1 week?',
     },
 ];
 

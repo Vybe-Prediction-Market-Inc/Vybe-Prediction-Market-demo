@@ -7,7 +7,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4">
-      <section className="card">
+      {/* <section className="card">
         <div className="card-body">
           <h1 className="h2">Your Profile</h1>
           <p className="mt-1 muted">Manage your identity and activity.</p>
@@ -39,7 +39,7 @@ export default function ProfilePage() {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
