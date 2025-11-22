@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { sepolia, localhost } from 'wagmi/chains';
+import { localhost, sepolia } from 'wagmi/chains';
 import { http } from 'viem';
 import '@rainbow-me/rainbowkit/styles.css';
 import CustomWalletButton from '@/components/CustomWalletButton';
@@ -71,6 +71,7 @@ function NavBar() {
             type="button"
             className="sm:hidden inline-flex items-center justify-center rounded-md border border-white/10 bg-white/10 px-2.5 py-1.5 text-sm text-[var(--fg)] hover:bg-white/20 transition"
             aria-expanded={mobileMenuOpen}
+            aria-label="Toggle navigation menu"
             onClick={() => setMobileMenuOpen((o) => !o)}
           >
             <svg
@@ -98,7 +99,7 @@ function NavBar() {
       {/* Mobile Menu */}
       <div
         className={`sm:hidden transition-all duration-300 ease-out overflow-hidden ${
-          mobileMenuOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+          mobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
         } border-t border-white/10 bg-[var(--bg)]/95 shadow-lg`}
       >
         <div className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-4">
@@ -115,9 +116,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-[var(--bg)] text-[var(--fg)]">
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={queryClient}>
-            <RainbowKitProvider initialChain={localhost}>
+            <RainbowKitProvider initialChain={sepolia}>
               <NavBar />
-              <main className="pt-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <main className="pt-20">
                 {children}
               </main>
             </RainbowKitProvider>
