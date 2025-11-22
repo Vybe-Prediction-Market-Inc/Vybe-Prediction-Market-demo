@@ -30,17 +30,18 @@ function NavBar() {
 
   const navLinks = (
     <>
-      {['Home', 'Explore', 'Dashboard', 'Profile'].map((name, i) => (
-        <Link
-          key={i}
-          href={name === 'Home' ? '/' : `/${name.toLowerCase()}`}
-          onClick={() => setMobileMenuOpen(false)}
-          className="relative text-[var(--muted)] hover:text-[var(--fg)] transition font-medium group"
-        >
-          {name}
-          <span className="absolute left-0 bottom-[-3px] w-0 h-[1.5px] bg-[var(--fg)] transition-all duration-300 group-hover:w-full"></span>
-        </Link>
-      ))}
+      <Link href="/" className="text-[var(--muted)] hover:text-[var(--fg)] transition" onClick={() => setMobileMenuOpen(false)}>
+        Home
+      </Link>
+      <Link href="/explore" className="text-[var(--muted)] hover:text-[var(--fg)] transition" onClick={() => setMobileMenuOpen(false)}>
+        Explore
+      </Link>
+      <Link href="/dashboard" className="text-[var(--muted)] hover:text-[var(--fg)] transition" onClick={() => setMobileMenuOpen(false)}>
+        Dashboard
+      </Link>
+      <Link href="/profile" className="text-[var(--muted)] hover:text-[var(--fg)] transition" onClick={() => setMobileMenuOpen(false)}>
+        Profile
+      </Link>
     </>
   );
 
