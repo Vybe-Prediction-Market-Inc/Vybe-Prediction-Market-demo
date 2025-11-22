@@ -1,22 +1,10 @@
 'use client';
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-
-interface BetDistribution {
-  yes: number;
-  no: number;
-}
+import { useUserYesNoDistribution } from '@/hooks/useUserDashboard';
 
 interface UserBetsPieChartProps {
-  address?: string;
-}
-
-// Mock data generator - will be replaced with useUserYesNoDistribution(address) hook
-function generateMockData(): BetDistribution {
-  return {
-    yes: 12,
-    no: 8,
-  };
+  address?: `0x${string}`;
 }
 
 const COLORS = {
@@ -25,9 +13,7 @@ const COLORS = {
 };
 
 export default function UserBetsPieChart({ address }: UserBetsPieChartProps) {
-  // TODO: Replace with actual hook call
-  // const { data, isLoading } = useUserYesNoDistribution(address);
-  const distribution = generateMockData();
+  const { distribution, loading } = useUserYesNoDistribution(address);
 
   const total = distribution.yes + distribution.no;
   const chartData = [
@@ -38,6 +24,32 @@ export default function UserBetsPieChart({ address }: UserBetsPieChartProps) {
   const renderCustomLabel = (entry: any) => {
     return `${entry.percentage}%`;
   };
+
+  if (loading) {
+    return (
+      <div className="card h-full">
+        <div className="card-body">
+          <h2 className="text-xl font-semibold text-[var(--fg)]">Bet Distribution</h2>
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="text-[var(--muted)]">Loading bet data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (total === 0) {
+    return (
+      <div className="card h-full">
+        <div className="card-body">
+          <h2 className="text-xl font-semibold text-[var(--fg)]">Bet Distribution</h2>
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="text-[var(--muted)]">No bets placed yet</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="card h-full">

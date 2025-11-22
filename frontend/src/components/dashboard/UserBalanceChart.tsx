@@ -2,47 +2,31 @@
 
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useUserBalanceHistory } from '@/hooks/useUserDashboard';
 
 type TimeRange = '7d' | '30d';
 
-interface BalanceDataPoint {
-  date: string;
-  balance: number;
-}
-
 interface UserBalanceChartProps {
-  address?: string;
-}
-
-// Mock data generator - will be replaced with useUserBalanceHistory(address) hook
-function generateMockData(days: number): BalanceDataPoint[] {
-  const data: BalanceDataPoint[] = [];
-  const now = new Date();
-  
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    
-    // Generate mock balance with some variation
-    const baseBalance = 0.5;
-    const variation = Math.sin(i * 0.5) * 0.2 + Math.random() * 0.1;
-    const balance = Math.max(0, baseBalance + variation);
-    
-    data.push({
-      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      balance: parseFloat(balance.toFixed(4)),
-    });
-  }
-  
-  return data;
+  address?: `0x${string}`;
 }
 
 export default function UserBalanceChart({ address }: UserBalanceChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>('7d');
+  const days = timeRange === '7d' ? 7 : 30;
   
-  // TODO: Replace with actual hook call
-  // const { data, isLoading } = useUserBalanceHistory(address);
-  const data = generateMockData(timeRange === '7d' ? 7 : 30);
+  const { data, loading } = useUserBalanceHistory(address, days);
+
+  if (loading) {
+    return (
+      <div className="card">
+        <div className="card-body">
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="text-[var(--muted)]">Loading balance data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="card">

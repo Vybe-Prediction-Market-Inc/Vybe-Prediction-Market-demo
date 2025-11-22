@@ -1,39 +1,10 @@
 'use client';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-interface WinLossDataPoint {
-  date: string;
-  wins: number;   // in 1/1000 ETH units
-  losses: number; // in 1/1000 ETH units
-}
+import { useUserWinsLosses } from '@/hooks/useUserDashboard';
 
 interface UserWinsLossesChartProps {
-  address?: string;
-}
-
-// Mock data generator - will be replaced with useUserWinsLosses(address) hook
-function generateMockData(): WinLossDataPoint[] {
-  const data: WinLossDataPoint[] = [];
-  const now = new Date();
-  
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    
-    // Generate mock wins/losses in 1/1000 ETH units
-    // E.g., 0.001 ETH = 1 unit, 0.005 ETH = 5 units
-    const wins = Math.floor(Math.random() * 10);
-    const losses = Math.floor(Math.random() * 8);
-    
-    data.push({
-      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      wins,
-      losses,
-    });
-  }
-  
-  return data;
+  address?: `0x${string}`;
 }
 
 const COLORS = {
@@ -42,9 +13,20 @@ const COLORS = {
 };
 
 export default function UserWinsLossesChart({ address }: UserWinsLossesChartProps) {
-  // TODO: Replace with actual hook call
-  // const { data, isLoading } = useUserWinsLosses(address);
-  const data = generateMockData();
+  const { data, loading } = useUserWinsLosses(address, 7);
+
+  if (loading) {
+    return (
+      <div className="card h-full">
+        <div className="card-body">
+          <h2 className="text-xl font-semibold text-[var(--fg)]">Wins & Losses</h2>
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="text-[var(--muted)]">Loading performance data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="card h-full">
