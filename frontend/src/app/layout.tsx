@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { localhost, sepolia } from 'wagmi/chains';
+import { sepolia } from 'wagmi/chains';
 import { http } from 'viem';
 import '@rainbow-me/rainbowkit/styles.css';
 import CustomWalletButton from '@/components/CustomWalletButton';
@@ -15,9 +15,8 @@ import CustomWalletButton from '@/components/CustomWalletButton';
 const wagmiConfig = getDefaultConfig({
   appName: 'Vybe Prediction Market',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
-  chains: [localhost, sepolia],
+  chains: [sepolia],
   transports: {
-    [localhost.id]: http('http://127.0.0.1:8545'),
     [sepolia.id]: http(process.env.NEXT_PUBLIC_RPC_URL),
   },
   ssr: true,
