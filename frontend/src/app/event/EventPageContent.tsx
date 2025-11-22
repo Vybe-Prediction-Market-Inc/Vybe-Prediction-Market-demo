@@ -307,22 +307,39 @@ export default function EventPageContent() {
             </button>
           </div>
 
-          {/* Claim Winnings Button (visible only after market is resolved) */}
-          {market.resolved && (
+          {/* Claim Winnings/Refund Button (visible only after market is resolved) */}
+          {market.resolved && userBet && userBet.betYes === market.outcomeYes && (
             <div className="mt-8 text-center">
-              {alreadyClaimed ? (
-                <div className="text-green-400 text-sm font-semibold">
-                  Already Claimed
-                </div>
-              ) : (
-                <button
-                  onClick={handleRedeem}
-                  disabled={!isConnected || redeeming}
-                  className="btn btn-success rounded-full"
-                >
-                  {redeeming ? 'Claiming...' : 'Claim Winnings'}
-                </button>
-              )}
+              {(() => {
+                // Check if this is a refund scenario
+                const isRefund = (userBet.betYes && market.noPool === BigInt(0)) ||
+                                 (!userBet.betYes && market.yesPool === BigInt(0));
+                
+                if (alreadyClaimed) {
+                  return (
+                    <div className="text-green-400 text-sm font-semibold">
+                      {isRefund ? 'Refund Claimed' : 'Already Claimed'}
+                    </div>
+                  );
+                }
+                
+                return (
+                  <>
+                    {isRefund && (
+                      <p className="text-amber-300 text-sm mb-3">
+                        No opponents placed bets on the other side. You can claim a refund of your stake.
+                      </p>
+                    )}
+                    <button
+                      onClick={handleRedeem}
+                      disabled={!isConnected || redeeming}
+                      className="btn btn-success rounded-full"
+                    >
+                      {redeeming ? 'Claiming...' : (isRefund ? 'Claim Refund' : 'Claim Winnings')}
+                    </button>
+                  </>
+                );
+              })()}
             </div>
           )}
         </div>

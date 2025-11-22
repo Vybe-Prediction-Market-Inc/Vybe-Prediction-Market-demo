@@ -205,6 +205,11 @@ export default function ExplorePage() {
               (bet.amount > BigInt(0)) &&
               (bet.betYes === market.outcomeYes)
             );
+            // Check if this is a refund scenario (no opponents on the other side)
+            const isRefund = eligibleToRedeem && (
+              (bet.betYes && market.noPool === BigInt(0)) ||
+              (!bet.betYes && market.yesPool === BigInt(0))
+            );
             const content = (
               <div className="card-body">
                 <div className="flex items-start justify-between gap-2">
@@ -222,12 +227,19 @@ export default function ExplorePage() {
                 )}
                 {eligibleToRedeem && (
                   <div className="mt-3">
+                    {isRefund && (
+                      <p className="text-xs text-amber-300 mb-2">No opponents - refund available</p>
+                    )}
                     <button
                       onClick={(e) => handleRedeem(e, market.contractAddress as `0x${string}`, market.marketId)}
                       className="btn btn-success rounded-full text-xs"
                       disabled={redeemingKeys.has(`${market.contractAddress}-${market.marketId}`)}
                     >
-                      {redeemingKeys.has(`${market.contractAddress}-${market.marketId}`) ? 'Claiming…' : 'Redeem Winnings'}
+                      {redeemingKeys.has(`${market.contractAddress}-${market.marketId}`) 
+                        ? 'Claiming…' 
+                        : isRefund 
+                          ? 'Claim Refund' 
+                          : 'Redeem Winnings'}
                     </button>
                   </div>
                 )}
