@@ -28,9 +28,9 @@ const HARDCODED_MARKET_BATCH = [
         songName: "Sweater Weather",
         artistName: "The Neighbourhood",
         threshold: "4200000000",
-        deadlineSeconds: 14400,
+        deadlineSeconds: 18000,
         question:
-            'Will "Sweater Weather" by The Neighbourhood hit 4.2 billion playbacks in 4 hours?',
+            'Will "Sweater Weather" by The Neighbourhood hit 4.2 billion playbacks in 5 hours?',
     },
     {
         songName: "DtMF",
@@ -59,10 +59,26 @@ const HARDCODED_MARKET_BATCH = [
     {
         songName: "Tamally Ma'ak",
         artistName: "Amr Diab",
-        threshold: "2000000000",
+        threshold: "30000000",
         deadlineSeconds: 604800,
         question:
-            'Will "Tamally maak" by Amr Diab hit 200 million playbacks in 1 week?',
+            'Will "Tamally maak" by Amr Diab hit 30 million playbacks in 1 week?',
+    },
+    {
+        songName: "Master of Puppets",
+        artistName: "Metallica",
+        threshold: "30000000",
+        deadlineSeconds: 7200,
+        question:
+            'Will "Master of Puppets" by Metallica hit 30 million playbacks in 2 hours?',
+    },
+     {
+        songName: "Creep",
+        artistName: "Radiohead",
+        threshold: "2000000",
+        deadlineSeconds: 14400,
+        question:
+            'Will "Creep" by Radiohead hit 2 million playbacks in 4 hours?',
     },
 ];
 
