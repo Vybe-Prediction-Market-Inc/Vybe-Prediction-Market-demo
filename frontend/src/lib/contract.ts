@@ -14,6 +14,17 @@ export const VYBE_CONTRACT_ABI: Abi = [
     anonymous: false,
   },
   {
+    type: "event",
+    name: "BetPlaced",
+    inputs: [
+      { name: "marketId", type: "uint256", indexed: true },
+      { name: "user", type: "address", indexed: true },
+      { name: "yes", type: "bool", indexed: false },
+      { name: "amount", type: "uint256", indexed: false },
+    ],
+    anonymous: false,
+  },
+  {
     type: "function",
     name: "marketCount",
     stateMutability: "view",
@@ -53,6 +64,7 @@ export const VYBE_CONTRACT_ABI: Abi = [
         { name: "betYes", type: "bool" },
         { name: "amount", type: "uint256" },
         { name: "claimed", type: "bool" },
+        { name: "timestamp", type: "uint256" },
       ],
       type: "tuple[]",
     },

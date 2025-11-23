@@ -30,6 +30,7 @@ contract VybePredictionMarket is Ownable, ReentrancyGuard {
         bool betYes;
         uint256 amount;
         bool claimed;
+        uint256 timestamp; // When the bet was first placed
     }
 
     // Admins
@@ -134,6 +135,7 @@ contract VybePredictionMarket is Ownable, ReentrancyGuard {
             userMarketIds[msg.sender].push(marketId);
             b.marketId = marketId;
             b.betYes = yes;
+            b.timestamp = block.timestamp; // Record when first bet was placed
         }
         b.amount += msg.value;
 
