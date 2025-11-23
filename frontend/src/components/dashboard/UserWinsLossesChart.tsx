@@ -19,7 +19,7 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
     return (
       <div className="card h-full">
         <div className="card-body">
-          <h2 className="text-xl font-semibold text-[var(--fg)]">Bets per Market Over Time</h2>
+          <h2 className="text-xl font-semibold text-[var(--fg)]">Wins & Losses per Market</h2>
           <div className="h-[400px] flex items-center justify-center">
             <p className="text-[var(--muted)]">Loading market data...</p>
           </div>
@@ -110,8 +110,8 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
               data={data}
               margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
             >
-              <CartesianGrid 
-                strokeDasharray="3 3" 
+              <CartesianGrid
+                strokeDasharray="3 3"
                 stroke="rgba(255,255,255,0.05)"
                 vertical={false}
               />
@@ -127,9 +127,10 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                label={{ 
-                  value: 'Count', 
-                  angle: -90, 
+                allowDecimals={false}
+                label={{
+                  value: 'Count',
+                  angle: -90,
                   position: 'insideLeft',
                   style: { fill: 'var(--muted)', fontSize: 12 }
                 }}
@@ -153,13 +154,13 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
                   </span>
                 )}
               />
-              <Bar 
+              <Bar
                 dataKey="wins"
                 name="Wins"
                 fill="#22C55E"
                 radius={[4, 4, 0, 0]}
               />
-              <Bar 
+              <Bar
                 dataKey="losses"
                 name="Losses"
                 fill="#EF4444"
