@@ -104,7 +104,7 @@ export default function UserBalanceChart({ address }: UserBalanceChartProps) {
                 labelStyle={{ color: 'var(--muted)' }}
                 formatter={(value: number) => [
                   `${value > 0 ? '+' : ''}${value} ETH`,
-                  value >= 0 ? 'Profit' : 'Loss'
+                  value > 0 ? 'Profit' : value < 0 ? 'Loss' : 'Break Even'
                 ]}
               />
               {/* Reference line at y=0 - the origin */}
