@@ -102,19 +102,7 @@ export default function UserBalanceChart({ address }: UserBalanceChartProps) {
                   color: 'var(--fg)',
                 }}
                 labelStyle={{ color: 'var(--muted)' }}
-                formatter={(value: number) => [
-                  `${value > 0 ? '+' : ''}${value} ETH`,
-                  value > 0 ? 'Profit' : value < 0 ? 'Loss' : 'Break Even'
-                ]}
-              />
-              {/* Reference line at y=0 - the origin */}
-              <Line
-                type="monotone"
-                dataKey={() => 0}
-                stroke="rgba(255,255,255,0.3)"
-                strokeWidth={2}
-                dot={false}
-                strokeDasharray="5 5"
+                formatter={(value: number) => `${value > 0 ? '+' : ''}${value} ETH`}
               />
               {/* Actual P&L line */}
               <Line
