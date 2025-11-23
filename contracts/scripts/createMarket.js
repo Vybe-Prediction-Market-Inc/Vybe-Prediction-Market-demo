@@ -9,7 +9,7 @@ const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
 const SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
 const HARDCODED_MARKET_BATCH = [
     {
-        songName: "Last Chrismas",
+        songName: "Last Christmas",
         artistName: "Wham!",
         threshold: "2000000000",
         deadlineSeconds: 172800,
@@ -46,7 +46,7 @@ const HARDCODED_MARKET_BATCH = [
         threshold: "300000000",
         deadlineSeconds: 259200,
         question:
-            'Will "Idilio" by Willie ColÃ³n hit 300 million playbacks in 3 days?',
+            'Will "Idilio" by Willie Colon hit 300 million playbacks in 3 days?',
     },
     {
         songName: "Fe!n",
@@ -76,9 +76,9 @@ const HARDCODED_MARKET_BATCH = [
         songName: "Creep",
         artistName: "Radiohead",
         threshold: "2000000",
-        deadlineSeconds: 14400,
+        deadlineSeconds: 600,
         question:
-            'Will "Creep" by Radiohead hit 2 million playbacks in 4 hours?',
+            'Will "Creep" by Radiohead hit 2 million playbacks in 10 minutes?',
     },
 ];
 

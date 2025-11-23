@@ -38,12 +38,6 @@ interface WinLossDataPoint {
     timestamp: number;
 }
 
-interface PLDataPoint {
-    date: string;
-    pnl: number; // Can be negative - cumulative profit/loss
-    timestamp: number;
-}
-
 export function useUserDashboardData(address?: `0x${string}`) {
     const client = usePublicClient();
     const [bets, setBets] = useState<UserBet[]>([]);
