@@ -158,14 +158,12 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
                 name="Wins"
                 fill="#22C55E"
                 radius={[4, 4, 0, 0]}
-                stackId="a"
               />
               <Bar 
                 dataKey="losses"
                 name="Losses"
                 fill="#EF4444"
                 radius={[4, 4, 0, 0]}
-                stackId="a"
               />
             </BarChart>
           </ResponsiveContainer>
