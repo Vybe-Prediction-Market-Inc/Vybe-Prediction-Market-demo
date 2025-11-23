@@ -13,7 +13,7 @@ interface UserBalanceChartProps {
 export default function UserBalanceChart({ address }: UserBalanceChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>('7d');
   const days = timeRange === '7d' ? 7 : 30;
-  
+
   const { data, loading } = useUserBalanceHistory(address, days);
 
   if (loading) {
@@ -35,7 +35,7 @@ export default function UserBalanceChart({ address }: UserBalanceChartProps) {
           <div>
             <h2 className="text-xl font-semibold text-[var(--fg)]">Net Profit/Loss Over Time</h2>
             <p className="text-sm text-[var(--muted)] mt-1">
-              Cumulative P&L: winnings minus total bets (can be negative)
+              Cumulative P&L
             </p>
           </div>
           <div className="flex gap-2">
@@ -68,8 +68,8 @@ export default function UserBalanceChart({ address }: UserBalanceChartProps) {
               data={data}
               margin={{ top: 5, right: 10, left: 20, bottom: 5 }}
             >
-              <CartesianGrid 
-                strokeDasharray="3 3" 
+              <CartesianGrid
+                strokeDasharray="3 3"
                 stroke="rgba(255,255,255,0.05)"
                 vertical={false}
               />
@@ -87,9 +87,9 @@ export default function UserBalanceChart({ address }: UserBalanceChartProps) {
                 tickLine={false}
                 axisLine={{ stroke: 'rgba(255,255,255,0.2)', strokeWidth: 2 }}
                 tickFormatter={(value) => `${value > 0 ? '+' : ''}${value}`}
-                label={{ 
-                  value: 'ETH', 
-                  angle: -90, 
+                label={{
+                  value: 'ETH',
+                  angle: -90,
                   position: 'insideLeft',
                   style: { fill: 'var(--muted)', fontSize: 12 }
                 }}
