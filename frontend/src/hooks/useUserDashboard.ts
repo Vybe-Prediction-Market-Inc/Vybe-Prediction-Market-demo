@@ -16,6 +16,8 @@ interface UserBet {
     deadline?: number;
     resolved?: boolean;
     outcomeYes?: boolean;
+    yesPool?: bigint;
+    noPool?: bigint;
 }
 
 interface BalanceDataPoint {
@@ -134,6 +136,14 @@ export function useUserDashboardData(address?: `0x${string}`) {
                                 mr.status === "fulfilled"
                                     ? Boolean(mr.value[5])
                                     : undefined,
+                            yesPool:
+                                mr.status === "fulfilled"
+                                    ? (mr.value[6] as bigint)
+                                    : undefined,
+                            noPool:
+                                mr.status === "fulfilled"
+                                    ? (mr.value[7] as bigint)
+                                    : undefined,
                         });
                     }
                 }
@@ -245,10 +255,30 @@ export function useUserBalanceHistory(
                     ) {
                         const userWon = bet.betYes === bet.outcomeYes;
                         if (userWon && bet.claimed) {
-                            // Approximate payout (would need pool data for exact calculation)
-                            // For now, assume 2x payout for simplicity
-                            // In reality, you'd calculate: (userShares / winningPool) * totalPool
-                            totalWon += betAmount * 2; // Simplified assumption
+                            // User won this bet - calculate actual payout using parimutuel formula
+                            if (
+                                bet.yesPool !== undefined &&
+                                bet.noPool !== undefined
+                            ) {
+                                const totalPool = parseFloat(
+                                    formatEther(bet.yesPool + bet.noPool)
+                                );
+                                const winningPool = bet.betYes
+                                    ? parseFloat(formatEther(bet.yesPool))
+                                    : parseFloat(formatEther(bet.noPool));
+
+                                if (winningPool > 0) {
+                                    const userPayout =
+                                        (betAmount / winningPool) * totalPool;
+                                    totalWon += userPayout;
+                                } else {
+                                    // Edge case: winning pool is 0, just refund the bet
+                                    totalWon += betAmount;
+                                }
+                            } else {
+                                // Fallback if pool data not available: assume 2x payout
+                                totalWon += betAmount * 2;
+                            }
                         }
                     }
                 }
