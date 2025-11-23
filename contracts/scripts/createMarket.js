@@ -9,52 +9,60 @@ const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
 const SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
 const HARDCODED_MARKET_BATCH = [
     {
-        songName: "back to friends",
-        artistName: "sombr",
-        threshold: "1400000000",
-        deadlineSeconds: 1209600,
-        question:
-            'Will "back to friends" by sombr hit 1.4 billion playbacks in 2 weeks?',
-    },
-    {
-        songName: "Todo de Ti",
-        artistName: "Rauw Alejandro",
-        threshold: "1700000000",
+        songName: "Last Chrismas",
+        artistName: "Wham!",
+        threshold: "2000000000",
         deadlineSeconds: 172800,
         question:
-            'Will "Todo de Ti" by Rauw Alejandro hit 1.7 billion playbacks in 2 days?',
+            'Will "Last Christmas" by Wham! hit 2 billion playbacks in 2 days?',
     },
     {
-        songName: "Creep",
-        artistName: "Radiohead",
-        threshold: "2500000000",
+        songName: "Runaway",
+        artistName: "Kanye West",
+        threshold: "1200000000",
+        deadlineSeconds: 345600,
+        question:
+            'Will "Runaway" by Kanye West hit 1.2 billion playbacks in 4 days?',
+    },
+    {
+        songName: "Sweater Weather",
+        artistName: "The Neighbourhood",
+        threshold: "4200000000",
         deadlineSeconds: 14400,
         question:
-            'Will "Creep" by Radiohead hit 2.5 billion playbacks in 4 hours?',
+            'Will "Sweater Weather" by The Neighbourhood hit 4.2 billion playbacks in 4 hours?',
     },
     {
-        songName: "Die With A Smile",
-        artistName: "Lady Gaga",
-        threshold: "3200000000",
+        songName: "DtMF",
+        artistName: "Bad Bunny",
+        threshold: "1300000000",
         deadlineSeconds: 86400,
         question:
-            'Will "Die With A Smile" by Bruno Mars and Lady Gaga hit 3.2 billion playbacks in 1 day?',
+            'Will "DtMF" by Bad Bunny hit 1.3 billion playbacks in 1 day?',
     },
     {
-        songName: "Sin Sentimientos",
-        artistName: "Grupo Niche",
+        songName: "Idilio",
+        artistName: "Willie Colon",
         threshold: "300000000",
         deadlineSeconds: 259200,
         question:
-            'Will "Sin Sentimientos" by Grupo Niche hit 300 million playbacks in 3 days?',
+            'Will "Idilio" by Willie ColÃ³n hit 300 million playbacks in 3 days?',
     },
     {
-        songName: "Da Wizard",
+        songName: "Fe!n",
         artistName: "Travis Scott",
-        threshold: "30000000",
+        threshold: "1600000000",
         deadlineSeconds: 604800,
         question:
-            'Will "Da Wizard" by Travis Scott hit 30 million playbacks in 1 week?',
+            'Will "FE!N" by Travis Scott hit 1.6 billion playbacks in 1 week?',
+    },
+    {
+        songName: "Tamally Ma'ak",
+        artistName: "Amr Diab",
+        threshold: "2000000000",
+        deadlineSeconds: 604800,
+        question:
+            'Will "Tamally maak" by Amr Diab hit 200 million playbacks in 1 week?',
     },
 ];
 
