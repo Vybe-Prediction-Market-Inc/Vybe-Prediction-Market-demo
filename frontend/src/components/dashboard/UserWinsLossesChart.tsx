@@ -163,7 +163,7 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
               <Bar
                 dataKey="losses"
                 name="Losses"
-                fill="#EF4444"
+                fill="#FBBF24"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>

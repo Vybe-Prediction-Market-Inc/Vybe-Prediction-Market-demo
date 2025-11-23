@@ -167,6 +167,24 @@ export function useUserDashboardData(address?: `0x${string}`) {
     return { bets, loading, error };
 }
 
+// Helper function to generate empty data points
+function generateEmptyDataPoints(days: number, now: number): BalanceDataPoint[] {
+    const emptyData: BalanceDataPoint[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+        const timestamp = now - i * 24 * 60 * 60 * 1000;
+        const date = new Date(timestamp);
+        emptyData.push({
+            date: date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+            }),
+            balance: 0,
+            timestamp,
+        });
+    }
+    return emptyData;
+}
+
 // Hook for balance over time chart
 export function useUserBalanceHistory(
     address?: `0x${string}`,
@@ -179,40 +197,13 @@ export function useUserBalanceHistory(
         const now = Date.now();
 
         if (loading) {
-            // Generate empty data points while loading
-            const emptyData: BalanceDataPoint[] = [];
-            for (let i = days - 1; i >= 0; i--) {
-                const timestamp = now - i * 24 * 60 * 60 * 1000;
-                const date = new Date(timestamp);
-                emptyData.push({
-                    date: date.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                    }),
-                    balance: 0,
-                    timestamp,
-                });
-            }
-            setData(emptyData);
+            setData(generateEmptyDataPoints(days, now));
             return;
         }
 
         // If no bets, show zeros
         if (!bets.length) {
-            const emptyData: BalanceDataPoint[] = [];
-            for (let i = days - 1; i >= 0; i--) {
-                const timestamp = now - i * 24 * 60 * 60 * 1000;
-                const date = new Date(timestamp);
-                emptyData.push({
-                    date: date.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                    }),
-                    balance: 0,
-                    timestamp,
-                });
-            }
-            setData(emptyData);
+            setData(generateEmptyDataPoints(days, now));
             return;
         }
 
