@@ -239,8 +239,9 @@ export function useUserBalanceHistory(
                         betDeadline <= timestampSec
                     ) {
                         const userWon = bet.betYes === bet.outcomeYes;
-                        if (userWon && bet.claimed) {
+                        if (userWon) {
                             // User won this bet - calculate actual payout using parimutuel formula
+                            // Include winnings regardless of claim status for accurate P&L
                             if (
                                 bet.yesPool !== undefined &&
                                 bet.noPool !== undefined
