@@ -1,27 +1,69 @@
 'use client';
 
+import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useUserWinsLosses } from '@/hooks/useUserDashboard';
+import { useUserWinsLossesByMarket } from '@/hooks/useUserDashboard';
+
+type TimeRange = '7d' | '30d';
 
 interface UserWinsLossesChartProps {
   address?: `0x${string}`;
 }
 
-const COLORS = {
-  wins: '#1ED760',  // Green
-  losses: '#FCD34D', // Yellow
-};
-
 export default function UserWinsLossesChart({ address }: UserWinsLossesChartProps) {
-  const { data, loading } = useUserWinsLosses(address, 7);
+  const [timeRange, setTimeRange] = useState<TimeRange>('7d');
+  const days = timeRange === '7d' ? 7 : 30;
+  const { data, loading } = useUserWinsLossesByMarket(address, days);
 
   if (loading) {
     return (
       <div className="card h-full">
         <div className="card-body">
-          <h2 className="text-xl font-semibold text-[var(--fg)]">Wins & Losses</h2>
+          <h2 className="text-xl font-semibold text-[var(--fg)]">Bets per Market Over Time</h2>
+          <div className="h-[400px] flex items-center justify-center">
+            <p className="text-[var(--muted)]">Loading market data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data.length) {
+    return (
+      <div className="card h-full">
+        <div className="card-body">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-[var(--fg)]">Bets per Market Over Time</h2>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                Daily bet count by market
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setTimeRange('7d')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  timeRange === '7d'
+                    ? 'bg-[var(--brand)] text-[var(--bg)]'
+                    : 'bg-white/5 text-[var(--muted)] hover:bg-white/10'
+                }`}
+              >
+                7 Days
+              </button>
+              <button
+                onClick={() => setTimeRange('30d')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  timeRange === '30d'
+                    ? 'bg-[var(--brand)] text-[var(--bg)]'
+                    : 'bg-white/5 text-[var(--muted)] hover:bg-white/10'
+                }`}
+              >
+                30 Days
+              </button>
+            </div>
+          </div>
           <div className="h-[300px] flex items-center justify-center">
-            <p className="text-[var(--muted)]">Loading performance data...</p>
+            <p className="text-[var(--muted)]">No bets to display</p>
           </div>
         </div>
       </div>
@@ -31,11 +73,35 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
   return (
     <div className="card h-full">
       <div className="card-body">
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-[var(--fg)]">Wins & Losses</h2>
-          <p className="text-sm text-[var(--muted)] mt-1">
-            Daily performance (in 0.001 ETH units)
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-xl font-semibold text-[var(--fg)]">Wins & Losses per Market</h2>
+            <p className="text-sm text-[var(--muted)] mt-1">
+              Daily wins and losses by market
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setTimeRange('7d')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                timeRange === '7d'
+                  ? 'bg-[var(--brand)] text-[var(--bg)]'
+                  : 'bg-white/5 text-[var(--muted)] hover:bg-white/10'
+              }`}
+            >
+              7 Days
+            </button>
+            <button
+              onClick={() => setTimeRange('30d')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                timeRange === '30d'
+                  ? 'bg-[var(--brand)] text-[var(--bg)]'
+                  : 'bg-white/5 text-[var(--muted)] hover:bg-white/10'
+              }`}
+            >
+              30 Days
+            </button>
+          </div>
         </div>
 
         <div className="h-[300px] w-full">
@@ -62,7 +128,7 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
                 tickLine={false}
                 axisLine={false}
                 label={{ 
-                  value: 'Units (×0.001 ETH)', 
+                  value: 'Count', 
                   angle: -90, 
                   position: 'insideLeft',
                   style: { fill: 'var(--muted)', fontSize: 12 }
@@ -76,10 +142,6 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
                   color: 'var(--fg)',
                 }}
                 labelStyle={{ color: 'var(--muted)', marginBottom: '8px' }}
-                formatter={(value: number, name: string) => {
-                  const ethValue = (value * 0.001).toFixed(4);
-                  return [`${value} (${ethValue} ETH)`, name === 'wins' ? 'Wins' : 'Losses'];
-                }}
               />
               <Legend
                 verticalAlign="top"
@@ -87,47 +149,35 @@ export default function UserWinsLossesChart({ address }: UserWinsLossesChartProp
                 iconType="circle"
                 formatter={(value) => (
                   <span style={{ color: 'var(--fg)', fontSize: '14px' }}>
-                    {value === 'wins' ? 'Wins' : 'Losses'}
+                    {value}
                   </span>
                 )}
               />
               <Bar 
-                dataKey="wins" 
-                fill={COLORS.wins}
+                dataKey="wins"
+                name="Wins"
+                fill="#22C55E"
                 radius={[4, 4, 0, 0]}
+                stackId="a"
               />
               <Bar 
-                dataKey="losses" 
-                fill={COLORS.losses}
+                dataKey="losses"
+                name="Losses"
+                fill="#EF4444"
                 radius={[4, 4, 0, 0]}
+                stackId="a"
               />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4">
           <div className="rounded-lg bg-white/5 p-3 border border-white/10">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.wins }} />
-              <span className="text-sm text-[var(--muted)]">Total Wins</span>
+              <span className="text-sm text-[var(--muted)]">Total Resolved Markets</span>
             </div>
             <div className="text-2xl font-semibold text-[var(--fg)] mt-1">
-              {data.reduce((sum, d) => sum + d.wins, 0)}
-            </div>
-            <div className="text-xs text-[var(--muted)] mt-1">
-              {(data.reduce((sum, d) => sum + d.wins, 0) * 0.001).toFixed(4)} ETH
-            </div>
-          </div>
-          <div className="rounded-lg bg-white/5 p-3 border border-white/10">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.losses }} />
-              <span className="text-sm text-[var(--muted)]">Total Losses</span>
-            </div>
-            <div className="text-2xl font-semibold text-[var(--fg)] mt-1">
-              {data.reduce((sum, d) => sum + d.losses, 0)}
-            </div>
-            <div className="text-xs text-[var(--muted)] mt-1">
-              {(data.reduce((sum, d) => sum + d.losses, 0) * 0.001).toFixed(4)} ETH
+              {data.reduce((sum, d) => sum + d.wins + d.losses, 0)}
             </div>
           </div>
         </div>

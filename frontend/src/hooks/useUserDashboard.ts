@@ -11,6 +11,7 @@ interface UserBet {
   betYes: boolean;
   amount: bigint;
   claimed: boolean;
+  timestamp?: number; // When bet was placed
   question?: string;
   deadline?: number;
   resolved?: boolean;
@@ -32,6 +33,12 @@ interface WinLossDataPoint {
   date: string;
   wins: number;
   losses: number;
+  timestamp: number;
+}
+
+interface PLDataPoint {
+  date: string;
+  pnl: number; // Can be negative - cumulative profit/loss
   timestamp: number;
 }
 
@@ -83,16 +90,53 @@ export function useUserDashboardData(address?: `0x${string}`) {
           );
           const marketResults = await Promise.allSettled(marketReads);
 
+          // Fetch BetPlaced event logs to get timestamps for each bet
+          const betPlacedEvent = VYBE_CONTRACT_ABI.find(
+            (entry) => entry.type === 'event' && entry.name === 'BetPlaced'
+          );
+
+          let betTimestamps: Record<number, number> = {};
+          if (betPlacedEvent) {
+            try {
+              const logs = await client.getLogs({
+                address: addr,
+                event: betPlacedEvent as any,
+                args: {
+                  user: address,
+                },
+                fromBlock: 'earliest',
+                toBlock: 'latest',
+              });
+
+              // Get block timestamps for each log
+              for (const log of logs) {
+                const args = (log as any).args;
+                if (!args) continue;
+                
+                const marketId = Number(args.marketId);
+                if (!betTimestamps[marketId] && log.blockNumber) {
+                  const block = await client.getBlock({ blockNumber: log.blockNumber });
+                  betTimestamps[marketId] = Number(block.timestamp);
+                }
+              }
+            } catch (logErr) {
+              console.warn('Failed to fetch bet timestamps from events:', logErr);
+            }
+          }
+
           for (let i = 0; i < rows.length; i++) {
             const b = rows[i];
             const mr = marketResults[i];
+            const marketId = Number(b.marketId);
             
             all.push({
               contractAddress: addr,
-              marketId: Number(b.marketId),
+              marketId,
               betYes: b.betYes,
               amount: b.amount as bigint,
               claimed: b.claimed,
+              // Use timestamp from contract if available, otherwise from event logs
+              timestamp: b.timestamp ? Number(b.timestamp) : betTimestamps[marketId],
               question: mr.status === 'fulfilled' ? mr.value[0] : undefined,
               deadline: mr.status === 'fulfilled' ? Number(mr.value[3]) : undefined,
               resolved: mr.status === 'fulfilled' ? Boolean(mr.value[4]) : undefined,
@@ -132,9 +176,11 @@ export function useUserBalanceHistory(address?: `0x${string}`, days: number = 7)
   const [data, setData] = useState<BalanceDataPoint[]>([]);
 
   useEffect(() => {
-    if (loading || !bets.length) {
-      // Generate empty data points
-      const now = Date.now();
+    const now = Date.now();
+    const nowSec = Math.floor(now / 1000);
+    
+    if (loading) {
+      // Generate empty data points while loading
       const emptyData: BalanceDataPoint[] = [];
       for (let i = days - 1; i >= 0; i--) {
         const timestamp = now - i * 24 * 60 * 60 * 1000;
@@ -149,8 +195,24 @@ export function useUserBalanceHistory(address?: `0x${string}`, days: number = 7)
       return;
     }
 
-    // Calculate balance at each day
-    const now = Date.now();
+    // If no bets, show zeros
+    if (!bets.length) {
+      const emptyData: BalanceDataPoint[] = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const timestamp = now - i * 24 * 60 * 60 * 1000;
+        const date = new Date(timestamp);
+        emptyData.push({
+          date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          balance: 0,
+          timestamp,
+        });
+      }
+      setData(emptyData);
+      return;
+    }
+
+    // Calculate cumulative P&L over time (can be negative!)
+    // P&L = Total claimed winnings - Total amount bet
     const dataPoints: BalanceDataPoint[] = [];
 
     for (let i = days - 1; i >= 0; i--) {
@@ -158,24 +220,40 @@ export function useUserBalanceHistory(address?: `0x${string}`, days: number = 7)
       const timestampSec = Math.floor(timestamp / 1000);
       const date = new Date(timestamp);
 
-      // Sum all active (unclaimed) bets that existed at this point in time
-      let balance = 0;
+      let totalBet = 0;
+      let totalWon = 0;
+
+      // Calculate P&L based on what happened up to this point
       for (const bet of bets) {
-        // Check if bet was active at this timestamp
-        const betDeadline = bet.deadline ?? Number.MAX_SAFE_INTEGER;
-        const isResolved = bet.resolved ?? false;
-        
-        // Bet is active if it hasn't been claimed and either:
-        // - Not resolved yet, or
-        // - Resolved but deadline hasn't passed
-        if (!bet.claimed && timestampSec <= betDeadline) {
-          balance += parseFloat(formatEther(bet.amount));
+        const betTimestamp = bet.timestamp;
+        const betDeadline = bet.deadline;
+
+        // Skip if we don't have timestamp data
+        if (!betTimestamp) continue;
+
+        // Only include bets placed before this timestamp
+        if (betTimestamp <= timestampSec) {
+          const betAmount = parseFloat(formatEther(bet.amount));
+          totalBet += betAmount;
+
+          // Check if bet was resolved and won by this timestamp
+          if (bet.resolved && betDeadline && betDeadline <= timestampSec) {
+            const userWon = bet.betYes === bet.outcomeYes;
+            if (userWon && bet.claimed) {
+              // Approximate payout (would need pool data for exact calculation)
+              // For now, assume 2x payout for simplicity
+              // In reality, you'd calculate: (userShares / winningPool) * totalPool
+              totalWon += betAmount * 2; // Simplified assumption
+            }
+          }
         }
       }
 
+      const pnl = totalWon - totalBet; // Can be negative!
+
       dataPoints.push({
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        balance: parseFloat(balance.toFixed(4)),
+        balance: parseFloat(pnl.toFixed(4)), // Using balance field for P&L
         timestamp,
       });
     }
@@ -270,6 +348,75 @@ export function useUserWinsLosses(address?: `0x${string}`, days: number = 7) {
         losses,
         timestamp,
       });
+    }
+
+    setData(dataPoints);
+  }, [bets, loading, days]);
+
+  return { data, loading };
+}
+
+// Hook for bets per market over time (for vertical bar chart with dates on X-axis)
+interface DateWinLossDataPoint {
+  date: string;
+  timestamp: number;
+  wins: number;
+  losses: number;
+}
+
+export function useUserWinsLossesByMarket(address?: `0x${string}`, days: number = 7) {
+  const { bets, loading } = useUserDashboardData(address);
+  const [data, setData] = useState<DateWinLossDataPoint[]>([]);
+
+  useEffect(() => {
+    if (loading) {
+      setData([]);
+      return;
+    }
+
+    if (!bets.length) {
+      setData([]);
+      return;
+    }
+
+    const now = Date.now();
+    
+    // Generate date labels and initialize data points
+    const dataPoints: DateWinLossDataPoint[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const timestamp = now - i * 24 * 60 * 60 * 1000;
+      const date = new Date(timestamp);
+      dataPoints.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        timestamp,
+        wins: 0,
+        losses: 0,
+      });
+    }
+
+    // Count wins and losses per date (based on when market was resolved)
+    for (const bet of bets) {
+      if (!bet.resolved || !bet.deadline) continue;
+      
+      // Use the deadline (resolution time) instead of bet placement time
+      const resolutionTimestampSec = bet.deadline;
+      const isWin = bet.betYes === bet.outcomeYes;
+
+      // Find which date this market was resolved
+      for (let i = 0; i < dataPoints.length; i++) {
+        const dp = dataPoints[i];
+        const dayStart = new Date(new Date(dp.timestamp).setHours(0, 0, 0, 0)).getTime() / 1000;
+        const dayEnd = dayStart + 86400;
+
+        if (resolutionTimestampSec >= dayStart && resolutionTimestampSec < dayEnd) {
+          if (isWin) {
+            dp.wins++;
+          } else {
+            dp.losses++;
+          }
+          break;
+        }
+      }
     }
 
     setData(dataPoints);

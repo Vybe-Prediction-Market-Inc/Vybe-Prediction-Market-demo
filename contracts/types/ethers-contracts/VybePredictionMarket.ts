@@ -6,9 +6,9 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 export declare namespace VybePredictionMarket {
       
-    export type BetInfoStruct = {marketId: BigNumberish, betYes: boolean, amount: BigNumberish, claimed: boolean}
+    export type BetInfoStruct = {marketId: BigNumberish, betYes: boolean, amount: BigNumberish, claimed: boolean, timestamp: BigNumberish}
 
-    export type BetInfoStructOutput = [marketId: bigint, betYes: boolean, amount: bigint, claimed: boolean] & {marketId: bigint, betYes: boolean, amount: bigint, claimed: boolean }
+    export type BetInfoStructOutput = [marketId: bigint, betYes: boolean, amount: bigint, claimed: boolean, timestamp: bigint] & {marketId: bigint, betYes: boolean, amount: bigint, claimed: boolean, timestamp: bigint }
   
     }
 
